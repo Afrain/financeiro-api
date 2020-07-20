@@ -2,6 +2,7 @@ package com.financeiro.api.service;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,15 @@ public class PessoaService {
 		Pessoa pessoaSalva = buscaPessoaPeloCodigo(codigo);
 		BeanUtils.copyProperties(pessoa, pessoaSalva, "codigo");
 		return pessoaRepository.save(pessoaSalva);
+	}
+	
+	public void excluirPessoa(Long codigo) {
+		try {
+		pessoaRepository.delete(codigo);
+		} catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityViolationException("Não é possivel excluir! Existe lançamento para essa pessoa.");
+		}
+		
 	}
 
 	public void atualizaPropriedadeAtivo(Long codigo, Boolean ativo) {

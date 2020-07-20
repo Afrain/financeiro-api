@@ -37,7 +37,7 @@ public class CorsFilter implements Filter {
 
 		if ("OPTIONS".equals(request.getMethod()) && financeiroApiProperty.getOrigemPermitida().equals(request.getHeader("Origin"))) {
 			response.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT, OPTIONS");
-			response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept");
+			response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, Origin, X-Requested-With");
 			response.setHeader("Access-Control-Max-Age", "3600"); // TEMPO BROWSER FARA PROXIMA REQUISIÇÃO EM SEGUNDOS
 
 			response.setStatus(HttpServletResponse.SC_OK);

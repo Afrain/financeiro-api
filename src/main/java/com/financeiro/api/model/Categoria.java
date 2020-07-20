@@ -17,7 +17,7 @@ public class Categoria {
 	private Long codigo;
 
 	@NotNull(message = "Nome é obrigatorio!")
-	@Size(min = 2, max = 50, message = "Nome deve ter de 5 á 50 caracteres!")
+	@Size(min = 2, max = 50, message = "Nome deve ter de 2 á 50 caracteres!")
 	private String nome;
 
 	public Long getCodigo() {

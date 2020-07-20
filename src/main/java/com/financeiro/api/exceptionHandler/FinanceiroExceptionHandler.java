@@ -60,7 +60,7 @@ public class FinanceiroExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler({ DataIntegrityViolationException.class })
 	public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
-		String messagemUsuario = messageSoucer.getMessage("recurso.operacao-nao-permitida", null, LocaleContextHolder.getLocale());
+		String messagemUsuario = ex.getMessage();
 		String messagemDesenvolvedor = ExceptionUtils.getRootCauseMessage(ex);
 		List<Erro> erros = Arrays.asList(new Erro(messagemUsuario, messagemDesenvolvedor));
 		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);

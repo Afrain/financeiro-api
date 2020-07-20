@@ -1,12 +1,12 @@
 package com.financeiro.api.resource;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.financeiro.api.event.RecursoCriadoEvent;
 import com.financeiro.api.model.Pessoa;
 import com.financeiro.api.repository.PessoaRepository;
+import com.financeiro.api.repository.filter.PessoaFilter;
 import com.financeiro.api.service.PessoaService;
 
 @RestController
@@ -33,16 +34,17 @@ public class PessoaResource {
 	private PessoaRepository pessoaRepository;
 
 	@Autowired
-	private PessoaService PessoaService;
+	private PessoaService pessoaService;
 
 	@Autowired
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
-	public List<Pessoa> listar() {
-		return pessoaRepository.findAll();
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA') and #oauth2.hasScope('read')")
+	public Page<Pessoa> pesquisar(PessoaFilter pessoaFilter, Pageable pageable) {
+		return pessoaRepository.filtrar(pessoaFilter, pageable);
 	}
-
+	
 	@GetMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA') and #oauth2.hasScope('read')")
 	public ResponseEntity<Pessoa> buscarPessoaCodigo(@PathVariable Long codigo) {
@@ -63,13 +65,13 @@ public class PessoaResource {
 	@PreAuthorize("hasAuthority('ROLE_REMOVER_PESSOA') and #oauth2.hasScope('write')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void excluirPessoa(@PathVariable Long codigo) {
-		pessoaRepository.delete(codigo);
+		pessoaService.excluirPessoa(codigo);
 	}
 
 	@PutMapping("/{codigo}")
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
 	public ResponseEntity<Pessoa> editarPessoa(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
-		Pessoa pessoaSalva = PessoaService.editaPessoa(codigo, pessoa);
+		Pessoa pessoaSalva = pessoaService.editaPessoa(codigo, pessoa);
 		return ResponseEntity.ok().body(pessoaSalva);
 	}
 
@@ -77,7 +79,7 @@ public class PessoaResource {
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA') and #oauth2.hasScope('write')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void editarAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
-		PessoaService.atualizaPropriedadeAtivo(codigo, ativo);
+		pessoaService.atualizaPropriedadeAtivo(codigo, ativo);
 
 	}
 
