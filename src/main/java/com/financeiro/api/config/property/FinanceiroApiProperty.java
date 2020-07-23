@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("financeiro")
 public class FinanceiroApiProperty {
 
-	private String origemPermitida = "https://spring-boot-financeiro-api.herokuapp.com/*";
+	private String origemPermitida = "https://spring-boot-financeiro-api.herokuapp.com/oauth/token";
 	private final Seguranca seguranca = new Seguranca();
 	
 	public Seguranca getSeguranca() {
